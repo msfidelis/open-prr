@@ -8,6 +8,7 @@ import (
 
 	"open-prr/pkg/memory_cache"
 	"open-prr/pkg/migration"
+	"open-prr/pkg/orm"
 
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
@@ -55,6 +56,11 @@ func main() {
 	// Migration
 	migration.Migrate()
 
+	// Database Warm Up
+	_, err = orm.GetInstance()
+	if err != nil {
+		fmt.Println("Error to retrieve ORM", err)
+	}
 	// New Router
 	router := gin.New()
 

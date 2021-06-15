@@ -10,4 +10,6 @@ require (
 	github.com/msfidelis/gin-chaos-monkey v0.0.5
 	github.com/patrickmn/go-cache v2.1.0+incompatible
 	github.com/rs/zerolog v1.18.0
+	gorm.io/driver/postgres v1.1.0
+	gorm.io/gorm v1.21.11
 )
