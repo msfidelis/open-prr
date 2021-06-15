@@ -9,9 +9,9 @@ CREATE TABLE IF NOT EXISTS prr_users (
 
 CREATE TABLE IF NOT EXISTS prr_groups (
 	id serial PRIMARY KEY,
-	label VARCHAR ( 50 ) UNIQUE NOT NULL,
-	created_on TIMESTAMP NOT NULL,
-    last_login TIMESTAMP 
+	name VARCHAR ( 50 ) UNIQUE NOT NULL,
+    protected BOOL NOT NULL DEFAULT false,
+	created_on TIMESTAMP NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS prr_users_has_groups (
@@ -19,19 +19,20 @@ CREATE TABLE IF NOT EXISTS prr_users_has_groups (
 	id_user serial NOT NULL,
 	id_group serial NOT NULL,
 	created_on TIMESTAMP NOT NULL,
-    last_login TIMESTAMP,
+    updated_on TIMESTAMP,
 	FOREIGN KEY (id_user) 	REFERENCES prr_users (id),
 	FOREIGN KEY (id_group) 	REFERENCES prr_groups (id)
 );
 
-CREATE TABLE IF NOT EXISTS prr_product (
+CREATE TABLE IF NOT EXISTS prr_products (
 	id serial PRIMARY KEY,
 	name VARCHAR ( 50 ) UNIQUE NOT NULL,
+    description TEXT DEFAULT NULL,
 	created_on TIMESTAMP NOT NULL,
-    last_login TIMESTAMP 
+    updated_on TIMESTAMP
 );
 
-CREATE TABLE IF NOT EXISTS prr_team (
+CREATE TABLE IF NOT EXISTS prr_teams (
 	id serial PRIMARY KEY,
 	name VARCHAR ( 50 ) UNIQUE NOT NULL,
 	created_on TIMESTAMP NOT NULL,
@@ -48,7 +49,7 @@ CREATE TABLE IF NOT EXISTS prr_users_has_teams (
 	FOREIGN KEY (id_team) 	REFERENCES prr_team (id)
 );
 
-CREATE TABLE IF NOT EXISTS prr_app (
+CREATE TABLE IF NOT EXISTS prr_apps (
 	id serial PRIMARY KEY,
 	name VARCHAR ( 50 ) UNIQUE NOT NULL,
 	id_team serial NOT NULL, 

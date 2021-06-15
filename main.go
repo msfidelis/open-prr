@@ -4,6 +4,7 @@ import (
 	"github.com/gin-contrib/logger"
 	"open-prr/controllers/healthcheck"
 	"open-prr/controllers/liveness"
+	"open-prr/controllers/products"
 	"open-prr/controllers/readiness"
 
 	"open-prr/pkg/memory_cache"
@@ -79,6 +80,13 @@ func main() {
 	// Liveness and Readiness
 	router.GET("/liveness", liveness.Ok)
 	router.GET("/readiness", readiness.Ok)
+
+	// products API
+	router.POST("/products", products.Create)
+	router.GET("/products", products.List)
+	router.GET("/products/{id}", products.Detail)
+	router.PUT("/products/{id}", products.Update)
+	router.DELETE("/products/{id}", products.Delete)
 
 	router.Run()
 
