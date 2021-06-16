@@ -85,9 +85,9 @@ func main() {
 	// products API
 	router.POST("/products", products.Create)
 	router.GET("/products", products.List)
-	router.GET("/products/{id}", products.Detail)
-	router.PUT("/products/{id}", products.Update)
-	router.DELETE("/products/{id}", products.Delete)
+	router.GET("/products/:id", products.Detail)
+	router.PUT("/products/:id", products.Update)
+	router.DELETE("/products/:id", products.Delete)
 
 	router.Run()
 

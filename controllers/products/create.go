@@ -3,6 +3,7 @@ package products
 import (
 	"fmt"
 	"net/http"
+	"time"
 
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
@@ -18,12 +19,12 @@ type RequestCreate struct {
 }
 
 type ResponseCreate struct {
-	Status int `json:"status" binding:"required"`
-}
-
-type ResponseError struct {
-	Message string `json:"message" binding:"required"`
-	Status  int    `json:"status" binding:"required"`
+	Status      int       `json:"status" binding:"required"`
+	Id          string    `json:"id" binding:"required"`
+	Name        string    `json:"name" binding:"required"`
+	Description string    `json:"description"`
+	CreatedAt   time.Time `json:"created_at"`
+	UpdateAt    time.Time `json:"updated_at"`
 }
 
 func Create(c *gin.Context) {
@@ -109,5 +110,11 @@ func Create(c *gin.Context) {
 		Msg("New product created")
 
 	response.Status = http.StatusCreated
-	c.JSON(http.StatusCreated, request)
+	response.Id = product.Id
+	response.Name = product.Name
+	response.Description = product.Description
+	response.CreatedAt = product.CreatedAt
+	response.UpdateAt = product.UpdatedAt
+
+	c.JSON(http.StatusCreated, response)
 }
