@@ -1,11 +1,12 @@
 package main
 
 import (
-	"github.com/gin-contrib/logger"
 	"open-prr/controllers/healthcheck"
 	"open-prr/controllers/liveness"
 	"open-prr/controllers/products"
 	"open-prr/controllers/readiness"
+
+	"github.com/gin-contrib/logger"
 
 	"open-prr/pkg/memory_cache"
 	"open-prr/pkg/migration"

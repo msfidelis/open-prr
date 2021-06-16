@@ -1,12 +1,21 @@
 package products
 
 import (
+	"fmt"
+	"net/http"
+
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
-	"net/http"
+
 	"open-prr/models/products"
-	"time"
+	"open-prr/pkg/logger"
+	"open-prr/pkg/orm"
 )
+
+type RequestCreate struct {
+	Name        string `json:"name" binding:"required"`
+	Description string `json:"description"`
+}
 
 type ResponseCreate struct {
 	Status int `json:"status" binding:"required"`
@@ -19,7 +28,9 @@ type ResponseError struct {
 
 func Create(c *gin.Context) {
 	var response ResponseCreate
-	var request products.Product
+	var request RequestCreate
+
+	log := logger.Instance()
 
 	// Request Validation
 	if err := c.BindJSON(&request); err != nil {
@@ -30,13 +41,72 @@ func Create(c *gin.Context) {
 		return
 	}
 
+	db, err := orm.GetInstance()
+
+	if err != nil {
+		panic(err)
+	}
+
+	// Check Product Name
+	var productNameCheck products.Product
+	resultCheck := db.Where("name = ?", request.Name).First(&productNameCheck)
+
+	if resultCheck.RowsAffected != 0 || productNameCheck.Id != "" {
+		log.Warn().
+			Str("name", request.Name).
+			Str("description", request.Description).
+			Str("error", "product already exists").
+			Str("component", "products").
+			Str("action", "creation").
+			Str("status", "error").
+			Msg("Error to create new product")
+
+		c.JSON(http.StatusBadRequest, &ResponseError{
+			Status:  http.StatusBadRequest,
+			Message: fmt.Sprintf("Product %s already exists", request.Name),
+		})
+		return
+	}
+
+	fmt.Println("Produto do banco", productNameCheck.Id)
+	fmt.Println("Quantidade", resultCheck.RowsAffected)
+
+	// New Product
+	var product products.Product
+
 	id, _ := uuid.NewUUID()
+	product.Id = id.String()
+	product.Name = request.Name
+	product.Description = request.Description
 
-	creationTimestamp := time.Now()
-	request.CreatedOn = creationTimestamp
-	request.UpdatedOn = creationTimestamp
+	// Insert Action
+	result := db.Create(&product)
 
-	request.Id = id.String()
+	if result.Error != nil {
+		log.Error().
+			Str("name", product.Name).
+			Str("description", product.Description).
+			Str("error", result.Error.Error()).
+			Str("component", "products").
+			Str("action", "creation").
+			Str("status", "error").
+			Msg("Error to create new product")
+
+		c.JSON(http.StatusInternalServerError, &ResponseError{
+			Status:  http.StatusInternalServerError,
+			Message: "Try again later",
+		})
+		return
+	}
+
+	log.Info().
+		Str("id", product.Id).
+		Str("name", product.Name).
+		Str("description", product.Description).
+		Str("component", "products").
+		Str("action", "creation").
+		Str("status", "success").
+		Msg("New product created")
 
 	response.Status = http.StatusCreated
 	c.JSON(http.StatusCreated, request)
