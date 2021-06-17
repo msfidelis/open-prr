@@ -76,7 +76,6 @@ func Detail(c *gin.Context) {
 	log := logger.Instance()
 
 	id := c.Param("id")
-	fmt.Println(id)
 
 	db, err := orm.GetInstance()
 
