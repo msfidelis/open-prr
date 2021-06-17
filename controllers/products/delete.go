@@ -42,7 +42,7 @@ func Delete(c *gin.Context) {
 		Str("component", "products").
 		Str("action", "delete").
 		Str("status", "success").
-		Msg("Product Deleted")
+		Msg("Product Deleted using Idempotency Method")
 
 	// log := logger.Instance()
 	c.JSON(http.StatusNoContent, response)
