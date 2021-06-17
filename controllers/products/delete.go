@@ -5,8 +5,9 @@ import (
 	"open-prr/models/products"
 	"open-prr/pkg/orm"
 
+	"open-prr/pkg/logger"
+
 	"github.com/gin-gonic/gin"
-	"github.com/rs/zerolog/log"
 )
 
 type ResponseDelete struct {
@@ -16,6 +17,7 @@ type ResponseDelete struct {
 func Delete(c *gin.Context) {
 	var response ResponseDelete
 	var product products.Product
+	log := logger.Instance()
 
 	id := c.Param("id")
 
@@ -44,6 +46,5 @@ func Delete(c *gin.Context) {
 		Str("status", "success").
 		Msg("Product Deleted using Idempotency Method")
 
-	// log := logger.Instance()
 	c.JSON(http.StatusNoContent, response)
 }
